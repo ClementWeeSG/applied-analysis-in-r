@@ -1,5 +1,5 @@
 ---
-title: "WIne App Frame"
+title: "Blood and Wine: The Wild Hunt"
 output: 
   flexdashboard::flex_dashboard:
     storyboard: true
