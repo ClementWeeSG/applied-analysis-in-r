@@ -1,0 +1,33 @@
+---
+title: "WIne App Frame"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+runtime: shiny
+---
+  
+  ```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+### Identify your favourite flavours
+
+Unviariate charts and tables here
+
+***
+
+  There are so many ways to classify alcohol. Why not you explore some of the many ways?
+
+
+### Locate your favourite flavours
+
+Chloropleth goes here
+
+***
+  
+Here is a world map. Enter some words to search for a particular flavour profile from our curated selection of 20 profiles
+
+
+### And now ... drink
+
+Bon Appetit!

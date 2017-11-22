@@ -1,0 +1,103 @@
+---
+title: "Blood and Wine: The Wild Hunt"
+output: 
+  flexdashboard::flex_dashboard:
+runtime: shiny
+---
+```{r setup, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+library(readr)
+wine <- read_csv("winemag-data_first150k_recoded_countries.csv")
+mapPolys <- geojsonio::geojson_read("countries.geo.json", what = "sp")
+```
+
+Page 1 - Histogram and Chloropleths  {data-orientation=rows}
+=====================================  
+
+Inputs {.sidebar}
+-------------------------------------
+This is the side bar where we put our shit. to select what's gonna be displayed in the chlorpleth
+
+```{r}
+# shiny inputs defined here
+selectInput(inputId = "variety", label = "Wine Variety", choices = wine$variety, selected = NULL, multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+
+selectInput(inputId = "country", label = "Country", choices = wine$country, selected = NULL, multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)
+
+sliderInput(inputId = "pointRange", label = "Points Between", min = 75, max = 100, value= c(90,100), step = NULL, round = FALSE,
+  format = NULL, locale = NULL, ticks = TRUE, animate = FALSE,
+  width = NULL, sep = ",", pre = NULL, post = NULL, timeFormat = NULL,
+  timezone = NULL, dragRange = TRUE)
+
+
+sliderInput(inputId = "priceRange", label = "Price Between", min = 0, max = 10000, value= c(10,100), step = NULL, round = FALSE,
+  format = NULL, locale = NULL, ticks = TRUE, animate = FALSE,
+  width = NULL, sep = ",", pre = NULL, post = NULL, timeFormat = NULL,
+  timezone = NULL, dragRange = TRUE)
+```
+
+
+Row {data-height=350}
+-------------------------------------
+    
+### Histogram: Price Distribution given the selected features
+insert histogram on world wide distribution of prices
+or maybe can put a selection toggle to switch between histogram and kernel density plot. or to overlay.
+```{r}
+```
+    
+Row {data-height=600 .tabset .tabset-fade}
+-------------------------------------    
+
+### Chloropleth  of Prices
+Insert Chloropleth world map of places where prices are high. Red for high, blue for low.
+I guess for interactive stuff, we need to use plotly.
+```{r}
+```
+
+### Chloropleth of Frequency
+insert chloropleth world map of places where frequency is highest.
+```{r}
+```
+
+Page 2 - Topic Modelling on Wine Descriptions  {data-orientation=rows}
+=====================================  
+
+Row {data-height=350}
+-------------------------------------
+    
+### Topic Modelling on Wine Descriptions
+    
+```{r}
+```
+
+Column {data-height=650 }
+-------------------------------------    
+
+### LDA
+insert bubble plot of intertopic distance map (via multidimensional scaling)
+```{r}
+```
+
+### LDA2
+insert top 30 most relevant terms for topic (3.5% of tokens)
+```{r}
+```
+
+Row {data-height=150}
+-------------------------------------
+
+### Summary
+When you click/hover on one circle, the top 20-30 words appear in this box to summarize the flavour.
+```{r}
+```
+
+Row {data-height=350}
+-------------------------------------
+### TF-IDF Relevance by Winery
+Insert TF-IDF bar chart.
+```{r}
+
+```
+
+
