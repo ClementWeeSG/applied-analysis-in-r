@@ -2,15 +2,24 @@
 title: "Blood and Wine: The Wild Hunt"
 output: 
   flexdashboard::flex_dashboard:
-    storyboard: true
 runtime: shiny
 ---
   
   ```{r setup, include=FALSE}
 library(flexdashboard)
+library(leaflet)
+library(readr)
+# load data
+wine_master <- read_csv("data/mastersetof_fullscopedata_deduped.csv")
+wine_bottles <- read_csv("data/beta_spread_wine_bottles.csv")
+mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
 ```
 
-### Identify your favourite flavours
+### Identify your favourite flavours {data-orientation=rows}
+===============================================================
+
+Column {data-wdith = 400}
+----------------
 
 Unviariate charts and tables here
 
