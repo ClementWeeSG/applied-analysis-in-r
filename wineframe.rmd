@@ -6,10 +6,11 @@ output:
 runtime: shiny
 ---
   
-  ```{r setup, include=FALSE}
+```{r setup, include=FALSE}
 library(flexdashboard)
 library(leaflet)
 library(readr)
+
 # load data
 wine_master <- read_csv("data/mastersetof_fullscopedata_deduped.csv")
 wine_bottles <- read_csv("data/beta_spread_wine_bottles.csv")
@@ -72,21 +73,23 @@ Row {.tabset, data-height = 500}
 ```{r}
 ```
 
-
-
-
-
 Locate your favourite flavours >>
 =================================
 
-Chloropleths go here
 
-***
-  
-Here is a world map. Enter some words to search for a particular flavour profile from our curated selection of 20 profiles
+And now ... Drink and view the entire array!{data-orientation=columns}
+======================================================================
+```{r}
+fillCol(height = 600, flex = c(NA, 1), 
+  inputPanel(
+    sliderInput(inputId = "labels", label = "Number of Labels", min = 0, max = 100000, value= 500, step = 100, round = TRUE, ticks = TRUE, animate = FALSE,
+  width = NULL, pre = NULL, post = NULL, timeFormat = NULL,
+  timezone = NULL, dragRange = TRUE)
+  ),
+  tableOutput("fullData")
+)
+
+output$fullData <- renderTable(wine_master[sample(nrow(wine_master), 10),])
 
 
-And now ... drink and see the full array!
-==========================================
-
-Bon Appetit!
+```
