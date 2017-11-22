@@ -2,6 +2,7 @@
 title: "Blood and Wine: The Wild Hunt"
 output: 
   flexdashboard::flex_dashboard:
+    orientation: rows
 runtime: shiny
 ---
   
@@ -15,28 +16,77 @@ wine_bottles <- read_csv("data/beta_spread_wine_bottles.csv")
 mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
 ```
 
-### Identify your favourite flavours {data-orientation=rows}
+Identify your favourite flavours >> {data-orientation=rows}
 ===============================================================
 
-Column {data-wdith = 400}
-----------------
+Row {data-height = 150}
+------------------------
 
-Unviariate charts and tables here
+Didn't you know there are many many ways to look at wine? Explore some ways below.
 
-***
+Row {.tabset, data-height = 500}
+--------------------------------
+### Pricing
 
-  There are so many ways to classify alcohol. Why not you explore some of the many ways?
+```{r}
+
+```
+
+### Variety
+
+```{r}
+```
+
+### Review Ratings
+
+```{r}
+```
+
+### Country
+```{r}
+
+```
+Sample the relationships >>
+===========================
+
+Row {data-height = 150}
+------------------------
+
+See how the different brands are related to each other
+
+Row {.tabset, data-height = 500}
+--------------------------------
+### Prices for different countries
+
+```{r}
+
+```
+
+### Ratings for different prices
+
+```{r}
+```
+
+### Ratings for different varieties
+
+```{r}
+```
 
 
-### Locate your favourite flavours
 
-Chloropleth goes here
+
+
+Locate your favourite flavours >>
+=================================
+
+Chloropleths go here
 
 ***
   
 Here is a world map. Enter some words to search for a particular flavour profile from our curated selection of 20 profiles
 
 
-### And now ... drink
+And now ... drink and see the full array!
+==========================================
 
 Bon Appetit!
