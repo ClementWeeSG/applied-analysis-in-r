@@ -15,21 +15,32 @@ library(readr)
 wine_master <- read_csv("data/mastersetof_fullscopedata_deduped.csv")
 wine_bottles <- read_csv("data/beta_spread_wine_bottles.csv")
 mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
+
+
+panelFourviewData <- reactive({
+  wine.sample = sample(nrow(wine_master), input$labels)
+  data <- wine_master[wine.sample,]
+  if (nrow(data) == 0)
+    data <- wine_master
+  data
+})
 ```
 
-Identify your favourite flavours >> {data-orientation=rows}
+Identify your favourite flavours >>
 ===============================================================
-
-Row {data-height = 150}
-------------------------
-
+Row {data-height=50}
+--------------------------
 Didn't you know there are many many ways to look at wine? Explore some ways below.
 
-Row {.tabset, data-height = 500}
---------------------------------
+Row {data-height=500 .tabset .tabset-fade}
+--------------------------
+
 ### Pricing
 
 ```{r}
+pricingDensity <- density(na.omit(wine_master$price), bw="sj")
+plot(pricingDensity, main = "Distribution of Wine Prices")
+polygon(pricingDensity, col = "blue", border="red")
 
 ```
 
@@ -79,17 +90,21 @@ Locate your favourite flavours >>
 
 And now ... Drink and view the entire array!{data-orientation=columns}
 ======================================================================
+Inputs {.sidebar}
+---------------------------------------------------------------------------------
 ```{r}
-fillCol(height = 600, flex = c(NA, 1), 
-  inputPanel(
-    sliderInput(inputId = "labels", label = "Number of Labels", min = 0, max = 100000, value= 500, step = 100, round = TRUE, ticks = TRUE, animate = FALSE,
+
+sliderInput(inputId = "labels", label = "Number of Labels", min = 462, max = nrow(wine_master), value= 500, step = 100, round = TRUE, ticks = TRUE, animate = FALSE,
   width = NULL, pre = NULL, post = NULL, timeFormat = NULL,
   timezone = NULL, dragRange = TRUE)
-  ),
-  tableOutput("fullData")
-)
 
-output$fullData <- renderTable(wine_master[sample(nrow(wine_master), 10),])
+```
 
+Column
+--------------------------------------------------------------------------------
+```{r}
+renderTable({
+  panelFourviewData()
+})
 
 ```
