@@ -17,13 +17,12 @@ wine_bottles <- read_csv("data/beta_spread_wine_bottles.csv")
 mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
 
 
-panelFourviewData <- reactive({
-  wine.sample = sample(nrow(wine_master), input$labels)
-  data <- wine_master[wine.sample,]
-  if (nrow(data) == 0)
-    data <- wine_master
-  data
-})
+
+
+source.utf8 <- function(f) {
+    l <- readLines(f, encoding="UTF-8")
+    eval(parse(text=l),envir=.GlobalEnv)
+}
 ```
 
 Identify your favourite flavours >>
@@ -104,7 +103,7 @@ Column
 --------------------------------------------------------------------------------
 ```{r}
 renderTable({
-  panelFourviewData()
+  wine_master[1:10,]
 })
 
 ```
