@@ -11,13 +11,6 @@ library(leaflet)
 library(readr)
 library(ggplot2)
 
-# UTF fix
-
-source.utf8 <- function(f) {
-    l <- readLines(f, encoding="UTF-8")
-    eval(parse(text=l),envir=.GlobalEnv)
-}
-
 # include helper
 
 source("r/topic_selections.r")
@@ -115,7 +108,10 @@ Inputs {.sidebar}
 ```{r}
 topic_suggestions = wine_topic_suggestions(wine_bottles)
 textInput("searchTerm", "Search:")
-selectInput("topicSelection","Topic", choices=topic_suggestions(), selected="topic1", selectize=FALSE)
+renderUI({
+  selectInput("topicSelection","Topic", choices=topic_suggestions(), selected="topic1")
+})
+
 ```
 
 Column
@@ -123,7 +119,9 @@ Column
 
 ```{r}
 chloro = make.chloropleth(wine_lda)
-chloro()
+renderLeaflet({
+  chloro()
+})
 ```
 
 
