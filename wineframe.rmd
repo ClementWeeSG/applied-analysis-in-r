@@ -20,16 +20,21 @@ source.utf8 <- function(f) {
 
 # include helper
 
-source("r/chloropleth.R")
+source("r/topic_selections.r")
 source("r/app_page1.r")
 
 # load data
 wine_file <- read_csv("data/wine_master.utf8.csv")
 wine_master <- wine_file[,c(24,26:33)]
+wine_lda <- wine_file[,4:24]
+wine_clusters <- wine_file[,2:4]
 wine_bottles <- read_csv("data/wine_betas.utf8.csv")
 mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
 names(mapPolys) = c("id","country")
 #mergedMap = sp::merge(mapPolys,wine_master)
+geographical_freqs = as.data.frame(sort(table(wine_master$country), decreasing=T))
+names(geographical_freqs) = c("Country","N")
+countries_by_freq = geographical_freqs$Country
 
 
 ```
@@ -39,6 +44,16 @@ Identify your favourite flavours >> {data-orientation=rows}
 Row {data-height=25}
 --------------------------
 Didn't you know there are many many ways to look at wine? Explore some ways below.
+
+Row {data-height=50 data-width=100%}
+------------------------------------
+Show me X countries, where X =
+
+```{r}
+numericInput("numCountries", "", 5, 1, length(countries_by_freq), width='50px')
+
+displayCountries <- reactive({countries_by_freq[1: input$numCountries,]})
+```
 
 Row {data-height=500 .tabset .tabset-fade}
 --------------------------
@@ -97,25 +112,20 @@ Locate your favourite flavours >>
 =================================
 Inputs {.sidebar}
 ---------------------------------------------------------------------
-
-Column {.tabset .tabset-fade}
------------------------------------------------------------------------
-### Price
 ```{r}
-wines_by_price = wine_master[, c("country","price")]
-mapByPrice = aggregate(wines_by_price, list( wines_by_price$country), median, na.action = na.omit)
-pal <- colorBin("Blues", domain = mapByPrice$price, bins = 5, na.color = "white")
-  
-leaflet(sp::merge(mapPolys,mapByPrice)) %>% addPolygons(
-    fillColor = ~pal(price),
-    weight = 2,
-    opacity = 1,
-    color = "black",
-    fillOpacity = 1.0
-  ) %>% addLegend(pal = pal, values = ~price, opacity = 0.7, title = NULL,
-                  position = "bottomright")
+topic_suggestions = wine_topic_suggestions(wine_bottles)
+textInput("searchTerm", "Search:")
+selectInput("topicSelection","Topic", choices=topic_suggestions(), selected="topic1", selectize=FALSE)
 ```
-### Topics
+
+Column
+-----------------------------------------------------------------------
+
+```{r}
+chloro = make.chloropleth(wine_lda)
+chloro()
+```
+
 
 And now ... Drink and view the entire array!{data-orientation=columns}
 ======================================================================

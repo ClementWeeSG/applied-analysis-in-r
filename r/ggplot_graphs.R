@@ -13,7 +13,7 @@ wine <-read.csv("Wine3.csv") # please change your file here
 
 # boxplot: standard boxplot.
 gbox <- ggplot(wine,aes(points,price,group=points,fill=country))+geom_boxplot(na.rm=TRUE)
-
+ 
 
 # boxplot: standard boxplot.
 gbox <- ggplot(subset(wine, country %in% c("France","Italy","Spain","Chile","United States of America")),
