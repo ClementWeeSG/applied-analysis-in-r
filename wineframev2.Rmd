@@ -1,0 +1,267 @@
+---
+title: "Blood and Wine: The Wild Hunt"
+output: 
+  flexdashboard::flex_dashboard:
+runtime: shiny
+---
+  
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(leaflet)
+library(readr)
+library(tidyverse)
+library(plotly)
+
+# UTF fix
+
+source.utf8 <- function(f) {
+    l <- readLines(f, encoding="UTF-8")
+    eval(parse(text=l),envir=.GlobalEnv)
+}
+
+# include helper
+
+source("r/chloropleth.R")
+source("r/app_page1.r")
+
+# load data
+wine_file <- read_csv("data/wine_master.utf8.csv")
+wine_master <- wine_file[,c(24,26:33)]
+wine_bottles <- read_csv("data/wine_betas.utf8.csv")
+mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
+names(mapPolys) = c("id","country")
+#mergedMap = sp::merge(mapPolys,wine_master)
+
+```
+
+```{r}
+### This chunk creates lists of names for the selectInput options 
+head(wine_master)
+wine_types <- sort(unique(wine_master$variety))
+country_names <- sort(unique(wine_master$country))
+
+#province_names <- sort(unique(wine_master$province))
+#province_names <- sort(unique(wine_master$province)) %in% (input$countryNames)
+vineyard_names <- sort(unique(wine_master$designation)) 
+winery_names <- sort(unique(wine_master$winery))
+```
+
+
+
+
+
+Sidebar {.sidebar} 
+=====================================
+
+This is the side bar where we put our shit. to select what's gonna be displayed in the chlorpleth
+
+```{r}
+# shiny inputs defined here
+selectInput(inputId = "wineType", label = "Wine Types", choices = wine_types, selected = NULL, multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+
+selectInput(inputId = "countryName", label = "Countries", choices = country_names, selected = NULL, multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+
+#selectInput(inputId = "provinceNames", label = "Province", choices = province_names, selected = NULL, multiple = TRUE, selectize = TRUE, width = NULL, size = NULL)
+
+selectInput(inputId = "wineryName", label = "Wineries", choices = winery_names, selected = NULL, multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)
+
+selectInput(inputId = "feature4", label = "Feature 4", choices = c("a", "b", "c"), selected = NULL, multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)
+
+selectInput(inputId = "feature5", label = "Feature 5", choices = c("a", "b", "c"), selected = NULL, multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)
+
+sliderInput(inputId = "priceRange", label = "Price Range", min = 0, max = 10000, value= c(10,100), step = NULL, round = FALSE,
+  format = NULL, locale = NULL, ticks = TRUE, animate = FALSE,
+  width = NULL, sep = ",", pre = NULL, post = NULL, timeFormat = NULL,
+  timezone = NULL, dragRange = TRUE)
+```
+
+Identify your favourite flavours >> {data-orientation=rows}
+===============================================================
+Row {data-height=25}
+--------------------------
+Didn't you know there are many many ways to look at wine? Explore some ways below.
+
+Row {data-height=500 .tabset .tabset-fade}
+--------------------------
+
+### Pricing
+
+```{r}
+page_1_price_dist(wine_master)
+
+```
+
+### Variety
+
+```{r}
+#page_1_variety_dist(wine_master)
+
+variety_points_Graph <- ggplot(subset(wine_master, 
+                                      variety %in% c("Pinot Noir","Chardonnay","Cabernet Sauvignon","Sauvignon Blanc","Syrah")
+                              ),
+              aes(points,fill=variety))+  
+              geom_bar(na.rm=TRUE,
+                      position="dodge")+
+              theme(legend.position="bottom")+
+              scale_x_discrete(name="Review Points") +
+              scale_y_continuous(name="Number of Reviews")+
+              ggtitle("Points by Top 5 Varieties")+
+              theme(legend.position = "bottom")
+
+variety_points_Graph <- ggplotly(variety_points_Graph)
+
+variety_points_Graph
+```
+
+### Review Ratings
+
+```{r}
+#page_1_ratings_dist(wine_master)
+
+review_Graph <- ggplot(wine_master,aes(points,fill=points))+geom_bar(na.rm=TRUE,fill="blue")+
+  ggtitle("Distribution of Reviews by Points")+
+  scale_x_continuous(name="Points in Review") +
+  scale_y_continuous(name="Number of Reviews")+
+  theme(legend.position = "none")+
+  xlim(80,100)
+
+review_Graph <- ggplotly(review_Graph)
+
+review_Graph
+```
+
+### Country
+```{r}
+#page_1_country_dist(wine_master)
+
+country_points_Graph <- ggplot(subset(wine_master, 
+              country %in% c("France","Italy","Spain","Chile","United States of America")
+                      ),
+              aes(points,fill=country))+  
+              geom_bar(na.rm=TRUE,
+                      position="dodge")+
+              theme(legend.position="bottom")+
+              scale_x_continuous(name="Review Points") +
+              scale_y_continuous(name="Number of Reviews")+
+              xlim(80,100)+
+              ggtitle("Reviews by Top 5 Countries")+
+              theme(legend.position = "bottom")
+
+country_points_Graph <- ggplotly(country_points_Graph)
+
+country_points_Graph
+
+```
+
+Sample the relationships >> {data-orientation=rows}
+===================================================
+
+Row {data-height = 150}
+------------------------
+
+See how the different brands are related to each other
+
+Row {.tabset, data-height = 500}
+--------------------------------
+### Prices for different countries
+
+```{r}
+
+country_price_Graph <- ggplot(subset(wine_master, 
+              country %in% c("France","Italy","Spain","Chile","United States of America")
+                      ),
+              aes(price,fill=country))+  
+              geom_bar(na.rm=TRUE,
+                      position="dodge")+
+              theme(legend.position="bottom")+
+              scale_x_continuous(name="Review Points") +
+              scale_y_continuous(name="Number of Reviews")+
+              ggtitle("Prices by Top 5 Countries")+
+              theme(legend.position = "bottom")
+
+country_price_Graph <- ggplotly(country_price_Graph)
+
+country_price_Graph
+
+```
+
+### Ratings for different prices
+
+```{r}
+
+price_points_Graph <- ggplot(wine_master,aes(points,price,group=points,color=points))+
+  geom_boxplot(na.rm=TRUE)+
+  scale_x_continuous(name="Review Points")+
+  scale_y_continuous(name="Price of Wine ($)")+
+  xlim(80,100)+
+  ggtitle("Boxplot of Wine Price by Review Points")+
+  theme(legend.position="none")
+
+price_points_Graph <- ggplotly(price_points_Graph)
+
+price_points_Graph
+```
+
+### Ratings for different varieties
+
+```{r}
+variety_points_Graph <- ggplot(subset(wine_master, 
+                                      variety %in% c("Pinot Noir","Chardonnay","Cabernet Sauvignon","Sauvignon Blanc","Syrah")
+                              ),
+              aes(points,fill=variety))+  
+              geom_bar(na.rm=TRUE,
+                      position="dodge")+
+              theme(legend.position="bottom")+
+              scale_x_discrete(name="Review Points") +
+              scale_y_continuous(name="Number of Reviews")+
+              ggtitle("Points by Top 5 Varieties")+
+              theme(legend.position = "bottom")
+
+variety_points_Graph <- ggplotly(variety_points_Graph)
+
+variety_points_Graph
+```
+
+Locate your favourite flavours >>
+=================================
+Inputs {.sidebar}
+---------------------------------------------------------------------
+
+Column {.tabset .tabset-fade}
+-----------------------------------------------------------------------
+### Price
+```{r}
+wines_by_price = wine_master[, c("country","price")]
+mapByPrice = aggregate(wines_by_price, list( wines_by_price$country), median, na.action = na.omit)
+pal <- colorBin("Blues", domain = mapByPrice$price, bins = 5, na.color = "white")
+  
+leaflet(sp::merge(mapPolys,mapByPrice)) %>% addPolygons(
+    fillColor = ~pal(price),
+    weight = 2,
+    opacity = 1,
+    color = "black",
+    fillOpacity = 1.0
+  ) %>% addLegend(pal = pal, values = ~price, opacity = 0.7, title = NULL,
+                  position = "bottomright")
+```
+### Topics
+
+And now ... Drink and view the entire array!{data-orientation=columns}
+======================================================================
+Inputs {.sidebar}
+---------------------------------------------------------------------------------
+```{r}
+
+numericInput(inputId = "labels", label = "Number of Labels", min = 50, max = nrow(wine_master), value= 500)
+
+```
+
+Column
+--------------------------------------------------------------------------------
+```{r}
+renderTable({
+  wine_sample <- sample(nrow(wine_master), as.integer(input$labels))
+  wine_master[wine_sample,]
+})
+
+```
