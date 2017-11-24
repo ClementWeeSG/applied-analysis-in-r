@@ -20,6 +20,7 @@ source.utf8 <- function(f) {
 # include helper
 
 source("r/chloropleth.R")
+source("r/app_page1.r")
 
 # load data
 wine_file <- read_csv("data/wine_master.utf8.csv")
@@ -44,25 +45,25 @@ Row {data-height=500 .tabset .tabset-fade}
 ### Pricing
 
 ```{r}
-source("page1/price.distribution.r")
+page_1_price_dist(wine_master)
 
 ```
 
 ### Variety
 
 ```{r}
-source("page1/variety.distribution.r")
+source("r/page1/variety.distribution.r")
 ```
 
 ### Review Ratings
 
 ```{r}
-source("page1/ratings.distribution.r")
+source("r/page1/ratings.distribution.r")
 ```
 
 ### Country
 ```{r}
-source("page1/country.distribution.r")
+source("r/page1/country.distribution.r")
 ```
 Sample the relationships >> {data-orientation=rows}
 ===================================================
