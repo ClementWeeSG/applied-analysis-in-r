@@ -9,6 +9,7 @@ runtime: shiny
 library(flexdashboard)
 library(leaflet)
 library(readr)
+library(ggplot2)
 
 # UTF fix
 
@@ -52,19 +53,20 @@ page_1_price_dist(wine_master)
 ### Variety
 
 ```{r}
-source("r/page1/variety.distribution.r")
+page_1_variety_dist(wine_master)
 ```
 
 ### Review Ratings
 
 ```{r}
-source("r/page1/ratings.distribution.r")
+page_1_ratings_dist(wine_master)
 ```
 
 ### Country
 ```{r}
-source("r/page1/country.distribution.r")
+page_1_country_dist(wine_master)
 ```
+
 Sample the relationships >> {data-orientation=rows}
 ===================================================
 
