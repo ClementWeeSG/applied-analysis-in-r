@@ -44,25 +44,25 @@ Row {data-height=500 .tabset .tabset-fade}
 ### Pricing
 
 ```{r}
-pricingDensity <- density(na.omit(wine_master$price), bw="sj")
-plot(pricingDensity, main = "Distribution of Wine Prices")
-polygon(pricingDensity, col = "blue", border="red")
+source("page1/price.distribution.r")
 
 ```
 
 ### Variety
 
 ```{r}
+source("page1/variety.distribution.r")
 ```
 
 ### Review Ratings
 
 ```{r}
+source("page1/ratings.distribution.r")
 ```
 
 ### Country
 ```{r}
-
+source("page1/country.distribution.r")
 ```
 Sample the relationships >> {data-orientation=rows}
 ===================================================
