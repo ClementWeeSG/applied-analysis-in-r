@@ -23,7 +23,7 @@ make.chloropleth = function(master){
     names(wine_selection) = c("country","presence")
     mapBySelection = aggregate(wines_by_price, list( wines_selection$country), median, na.action = na.omit)
     color.ramp = colorRamp(c("red","blue"), interpolate = "spline")
-    pal <- colorNumeric(color.ramp, domain = wines_selection$weight, na.color = "white")
+    pal <- colorBin("Blues", domain = wines_selection$weight, bins=10, na.color = "white")
     
     leaflet(sp::merge(mapPolys,wine_selection)) %>% addPolygons(
       fillColor = ~pal(presence),
