@@ -22,9 +22,9 @@ source.utf8 <- function(f) {
 source("r/chloropleth.R")
 
 # load data
-wine_file <- read_csv("data/wine-master.csv")
+wine_file <- read_csv("data/wine_master.utf8.csv")
 wine_master <- wine_file[,c(24,26:33)]
-wine_bottles <- read_csv("data/wine-betas.csv")
+wine_bottles <- read_csv("data/wine_betas.utf8.csv")
 mapPolys <- geojsonio::geojson_read("data/countries.geo.json", what = "sp")
 names(mapPolys) = c("id","country")
 #mergedMap = sp::merge(mapPolys,wine_master)
@@ -120,7 +120,7 @@ Inputs {.sidebar}
 ---------------------------------------------------------------------------------
 ```{r}
 
-numericInput(inputId = "labels", label = "Number of Labels", min = 500, max = nrow(wine_master), value= 500, step = 100, width = '50px')
+numericInput(inputId = "labels", label = "Number of Labels", min = 50, max = nrow(wine_master), value= 500)
 
 ```
 
@@ -128,7 +128,8 @@ Column
 --------------------------------------------------------------------------------
 ```{r}
 renderTable({
-  wine_master
+  wine_sample <- sample(nrow(wine_master), as.integer(input$labels))
+  wine_master[wine_sample,]
 })
 
 ```
