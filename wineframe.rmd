@@ -32,9 +32,9 @@ names(mapPolys) = c("id","country")
 
 ```
 
-Identify your favourite flavours >>
+Identify your favourite flavours >> {data-orientation=rows}
 ===============================================================
-Row {data-height=50}
+Row {data-height=25}
 --------------------------
 Didn't you know there are many many ways to look at wine? Explore some ways below.
 
